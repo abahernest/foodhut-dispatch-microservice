@@ -16,10 +16,24 @@ export class OrderService implements OnModuleInit {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     public onModuleInit(): void {}
 
-    public async updateDispatchStatus( data: MonitorDispatchRequest ) {
+    public async updateDispatchStatus( data: MonitorDispatchRequest ): Promise<FindOrderResponseDto> {
         const { orderId: id } = data;
 
         await this.repository.update(id, { dispatched: true } );
+
+        const order = await this.repository.findOne({
+            where: { id },
+        });
+
+        return {
+            id: order.id,
+            name: order.name,
+            address: order.address,
+            status: order.status,
+            dispatched: order.dispatched,
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt,
+        };
     }
 
     public async findOrderById( id: string): Promise<FindOrderResponseDto> {
